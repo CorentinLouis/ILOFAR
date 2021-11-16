@@ -16,7 +16,7 @@ from mpl_toolkits import axes_grid1
 
 import datetime
 
-def plot_data(dataBlock_I, dataBlock_V, t_init, t_end, plotPrefix, filePrefix, startingSample, percentiles, frequency_limits, figsize,fontsize, bandpass = None, reverse=None, cmap=None):
+def plot_data(dataBlock_I, dataBlock_V, t_init, t_end, plotPrefix, filePrefix, startingSample, percentiles, flux_limits, frequency_limits, figsize,fontsize, bandpass = None, reverse=None, cmap=None):
 
 	fig, axmain = plt.subplots(2,1,figsize=figsize,sharex=True)
 	gs = fig.add_gridspec(26, 14)
@@ -60,7 +60,10 @@ def plot_data(dataBlock_I, dataBlock_V, t_init, t_end, plotPrefix, filePrefix, s
 	time_limit = mdates.date2num(time_limit)
 
 # Plotting data - Stokes I
-	vmx, vmn = np.percentile(dataBlock_I, percentiles)
+	if flux_limits:
+		vmn, vmx = flux_limits
+	else:
+		vmx, vmn = np.percentile(dataBlock_I, percentiles)
 	ScaleZ=colors.Normalize(vmn,vmx)
 	axmainArtist_I = axmain[0].imshow(dataBlock_I,cmap=cmap, aspect = 'auto', vmin=vmn,vmax=vmx, interpolation ='none', extent =[time_limit[0], time_limit[1], fbot, ftop])
 # Setting colorbar
@@ -116,15 +119,22 @@ def plot_data(dataBlock_I, dataBlock_V, t_init, t_end, plotPrefix, filePrefix, s
 
 # Formatting the date
 	if time_delta.total_seconds() <= 5:
-		dateFmt = mdates.DateFormatter('%H:%M:%S.%f')
+		dateFmt = mdates.DateFormatter('%S.%f')
 	elif time_delta.total_seconds() < 600:
 		dateFmt=mdates.DateFormatter('%H:%M:%S')
 	else:
 		dateFmt=mdates.DateFormatter('%H:%M')
+
 	axmain[1].xaxis.set_major_formatter(dateFmt)
-	title_1.set_text(f"Stokes I - {t_init.strftime('%d %b %Y')}")
+
+	if time_delta.total_seconds() <= 5:
+		title_1.set_text(f"Stokes I - {t_init.strftime('%d %b %Y %H:%M')}")
+		title_2.set_text(f"Stokes V - {t_init.strftime('%d %b %Y %H:%M')}")
+	else:
+		title_1.set_text(f"Stokes I - {t_init.strftime('%d %b %Y')}")
+		title_2.set_text(f"Stokes V - {t_init.strftime('%d %b %Y')}")
+
 	title_1.set_size(fontsize+2)
-	title_2.set_text(f"Stokes V - {t_init.strftime('%d %b %Y')}")
 	title_2.set_size(fontsize+2)
 
 # Setting fontisze of ticks and labels
@@ -161,6 +171,7 @@ if __name__ == '__main__':
 	parser.add_argument('--time_end', dest = 't_end', default = None, type = str, help = "Time end of the plot (YYYYMMDDhhmmss)")
 	parser.add_argument('--frequency_limits', dest = 'frequency_limits', nargs = 2,type=float, default = None, help = "Plotting frequency limits")
 	parser.add_argument('--percentiles', dest = 'percentiles', nargs = 2, type = int, default = [99, 1], help = "Plotting percentile limits")
+	parser.add_argument('--flux_limits', dest ='flux_limits', nargs = 2, type = float, default = None, help = "Plotting limits")
 
 	parser.add_argument('--plot_raw', dest = 'plot_raw', default = False, action = 'store_true', help = "Plot the raw data")
 	parser.add_argument('--plot_deci', dest = 'plot_deci', default = False, action = 'store_true', help = "Plot the base decimated data")
@@ -303,11 +314,8 @@ if __name__ == '__main__':
 	if args.t_init and args.t_end:
 		print(f"t_init: {t_init_user} and t_end: {t_end_user}")
 	if args.plot_raw:
-		plot_data(dataBlock_I, dataBlock_V, t_init_user, t_end_user, args.title, args.prefix, readTimestamp, args.percentiles, args.frequency_limits, args.figsize, args.fontsize, reverse = args.rev, cmap = args.cmap)
+		plot_data(dataBlock_I, dataBlock_V, t_init_user, t_end_user, args.title, args.prefix, readTimestamp, args.percentiles, args.flux_limits, args.frequency_limits, args.figsize, args.fontsize, reverse = args.rev, cmap = args.cmap)
 	if args.plot_norm and args.plot_deci == False:
-		plot_data(dataBlock_I,dataBlock_V, t_init_user, t_end_user, f"{args.title} (norm)", f"{args.prefix}_norm", readTimestamp, args.percentiles, args.frequency_limits, args.figsize, args.fontsize, cmap = args.cmap)
+		plot_data(dataBlock_I,dataBlock_V, t_init_user, t_end_user, f"{args.title} (norm)", f"{args.prefix}_norm", readTimestamp, args.percentiles, args.flux_limits, args.frequency_limits, args.figsize, args.fontsize, cmap = args.cmap)
 	if args.plot_deci or args.plot_deci_norm:
-		plot_data(dataBlock_I,dataBlock_V, t_init_user, t_end_user, f"{args.title} (Decimated x {args.deci})", f"{args.prefix}_deci_{args.deci}", readTimestamp, args.percentiles, args.frequency_limits, args.figsize, args.fontsize, cmap = args.cmap)
-
-
-
+		plot_data(dataBlock_I,dataBlock_V, t_init_user, t_end_user, f"{args.title} (Decimated x {args.deci})", f"{args.prefix}_deci_{args.deci}", readTimestamp, args.percentiles, args.flux_limits, args.frequency_limits, args.figsize, args.fontsize, cmap = args.cmap)
