@@ -1,10 +1,13 @@
 # ILOFAR
-Codes to read and process ILOFAR data
+Code to read and process ILOFAR data
+
+The *plot_raw_data.py* routine will calculate and plot, from a sigproc filterbank file, the Stokes I (intensity) and V (degree of circular polarization) parameters.
+
 
 **How to us it**
 
 *Required entries:*
-* -i: input data path/filename lcoation. The data needs to be contained within a sigproc filterbank file
+* -i: input data path/filename location. The data needs to be contained within a sigproc filterbank file
 * -o: output dynamic spectrum path/filename location (without extension type; it will be png format).
 
 *Optionnal entries:*
