@@ -35,6 +35,7 @@ Codes to read and process ILOFAR data
 
 
 *example*:
+
 python3 plot_raw_data.py -i /path/to/datafile/filename.fil-o /path/to/outputfile/output_filename --plot_raw --plot_deci --deci 4 --subtract_background --time_start 20210608051030 --time_end 20210608051040 --frequency_limits 8 40 --flux_limits -15 19 --figsize 15 15 --colormap 'viridis'--fontsize 22
 
 In this example, *raw* data from *filename.fil* will be plot and saved into *output_filename.png* file. The data will be *downsample in time (by a factor 4)*. Only data between in the temporal *20210608051030*-*20210608051040* and spectral *8-40* ranges will be plot. *Intensity flux limits* are fixed between *-15* and *19* dB. The data will be plot using the *viridis* colomarp.
