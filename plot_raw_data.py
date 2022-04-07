@@ -253,15 +253,19 @@ if __name__ == '__main__':
 	P_AB = np.zeros([filReader.header.nchans,int(samplesPerBlock/4)])
 	P_BA = np.zeros([filReader.header.nchans,int(samplesPerBlock/4)])
 
-	for j in range(int(samplesPerBlock/4)):
-		P_AA[:,j] = dataBlock_all[:,j*4+0]
-		P_BB[:,j] = dataBlock_all[:,j*4+1]
-		P_AB[:,j] = dataBlock_all[:,j*4+2]
-		P_BA[:,j] = dataBlock_all[:,j*4+3]
+	P_AA = dataBlock_all[:, 0::4]
+	P_BB = dataBlock_all[:, 1::4]
+	P_AB = dataBlock_all[:, 2::4]
+	P_BA = dataBlock_all[:, 3::4]
+	#for j in range(int(samplesPerBlock/4)):
+	#	P_AA[:,j] = dataBlock_all[:,j*4+0]
+	#	P_BB[:,j] = dataBlock_all[:,j*4+1]
+	#	P_AB[:,j] = dataBlock_all[:,j*4+2]
+	#	P_BA[:,j] = dataBlock_all[:,j*4+3]
 
 # calculating Stokes I and V
-	dataBlock_I=spp.Filterbank.FilterbankBlock(P_AA**2+P_BB**2,dataBlock_all.header)
-	dataBlock_V=spp.Filterbank.FilterbankBlock(-2*P_BA,dataBlock_all.header)
+	dataBlock_I = spp.Filterbank.FilterbankBlock(P_AA**2+P_BB**2,dataBlock_all.header)
+	dataBlock_V = spp.Filterbank.FilterbankBlock(-2*P_BA,dataBlock_all.header)
 
 # Downsampling the data and normalizing them if asked by the user
 	if args.plot_deci or args.plot_deci_norm:
