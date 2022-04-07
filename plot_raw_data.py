@@ -313,7 +313,7 @@ if __name__ == '__main__':
 	dataBlock_Q = spp.Filterbank.FilterbankBlock(P_AA**2-P_BB**2,dataBlock_all.header)
 	dataBlock_U = spp.Filterbank.FilterbankBlock(2*P_AB,dataBlock_all.header)
 	dataBlock_V = spp.Filterbank.FilterbankBlock(-2*P_BA,dataBlock_all.header)
-	dataBlock_L = spp.Filterbank.FilterbankBlock(np.sqrt((P_AA**2-P_BB**2)**2+(2*P_AB)**2,dataBlock_all.header))
+	dataBlock_L = spp.Filterbank.FilterbankBlock(np.sqrt((P_AA**2-P_BB**2)**2+(2*P_AB)**2),dataBlock_all.header)
 
 # Downsampling the data and normalizing them if asked by the user
 	if args.plot_deci or args.plot_deci_norm:
