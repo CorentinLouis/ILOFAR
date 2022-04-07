@@ -1,7 +1,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # ILOFAR
-Code to read and process ILOFAR data
+Code to read and process Jupiter radio emissions observations from LOFAR data
 
 The *plot_raw_data.py* routine will calculate and plot, from a sigproc filterbank file, the Stokes I (intensity) and V (degree of circular polarization) parameters.
 
