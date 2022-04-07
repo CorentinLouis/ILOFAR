@@ -98,7 +98,7 @@ def plot_data(dataBlock_I, dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t
 
 
 # Setting colorbar
-	ax=axmainArtist_V.axes
+	ax=axmainArtist_U.axes
 	fig=ax.figure
 	divider = axes_grid1.make_axes_locatable(ax)
 	cb = fig.colorbar(axmainArtist_U, extend='both',ax=axmain[2])
