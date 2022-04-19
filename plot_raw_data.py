@@ -186,15 +186,16 @@ def plot_data(dataBlock_I, dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t
 # This line converts it from a float into a nice datetime string
 	axmain[-1].xaxis_date()
 
-
 # Formatting the date
 	if time_delta.total_seconds() <= 5:
 		dateFmt = mdates.DateFormatter('%S.%f')
+		axmain[-1].set_xlabel(f"Time (seconds since {t_init.strftime('%d %b %Y %H:%M')})")
 	elif time_delta.total_seconds() < 600:
 		dateFmt=mdates.DateFormatter('%H:%M:%S')
+		axmain[-1].set_xlabel(f"Time (hours since {t_init.strftime('%d %b %Y')})")
 	else:
 		dateFmt=mdates.DateFormatter('%H:%M')
-
+		axmain[-1].set_xlabel(f"Time (hours since {t_init.strftime('%d %b %Y')})")
 	axmain[1].xaxis.set_major_formatter(dateFmt)
 
 	if full_stokes == True:
@@ -210,6 +211,7 @@ def plot_data(dataBlock_I, dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t
 			title_3.set_text(f"Stokes U - {t_init.strftime('%d %b %Y')}")
 			title_4.set_text(f"Stokes V - {t_init.strftime('%d %b %Y')}")
 			title_5.set_text(f"Linear Polarization L - {t_init.strftime('%d %b %Y')}")
+
 		title_3.set_size(fontsize+2)
 		title_4.set_size(fontsize+2)
 		title_5.set_size(fontsize+2)
@@ -248,7 +250,7 @@ def plot_data(dataBlock_I, dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t
 #	axmain[1].yaxis.label.set_size(fontsize)
 ##	axmain[2].yaxis.label.set_size(fontsize)
 	plt.tight_layout()
-	plt.savefig(filename)
+	plt.savefig(filename, bbox_inches='tight')
 
 def rollingAverage(data, step = 8):
 	rollingSum = np.cumsum(data)
