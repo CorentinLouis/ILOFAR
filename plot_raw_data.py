@@ -16,15 +16,28 @@ from mpl_toolkits import axes_grid1
 
 import datetime
 
-def plot_data(dataBlock_I, dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t_init, t_end, plotPrefix, filePrefix, startingSample, percentiles, flux_limits, frequency_limits, figsize,fontsize, bandpass = None, reverse=None, cmap=None):
+def plot_data(dataBlock_I, dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t_init, t_end, plotPrefix, filePrefix, startingSample, percentiles, flux_limits, frequency_limits, figsize,fontsize, bandpass = None, reverse=None, cmap=None, full_stokes = False):
 
-	fig, axmain = plt.subplots(5,1,figsize=figsize,sharex=True)
+	if full_stokes == True:
+		fig, axmain = plt.subplots(5,1,figsize=figsize,sharex=True)
+	else:
+		fig, axmain = plt.subplots(2,1,figsize=figsize,sharex=True)
 	gs = fig.add_gridspec(26, 14)
 
 	axmain[0].set_ylabel("Frequency (MHz)")
 	axmain[1].set_ylabel("Frequency (MHz)")
+
 	title_1 = axmain[0].set_title("")
 	title_2 = axmain[1].set_title("")
+
+	if full_stokes == True:
+		axmain[2].set_ylabel("Frequency (MHz)")
+		axmain[3].set_ylabel("Frequency (MHz)")
+		axmain[4].set_ylabel("Frequency (MHz)")
+
+		title_3 = axmain[2].set_title("")
+		title_4 = axmain[3].set_title("")
+		title_5 = axmain[4].set_title("")
 
 	if frequency_limits == None:
 		ftop = dataBlock_I.header.ftop
@@ -60,81 +73,92 @@ def plot_data(dataBlock_I, dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t
 	time_limit = mdates.date2num(time_limit)
 
 # Plotting data - Stokes I
+	ind_mplotlib = 0
 	if flux_limits:
 		vmn, vmx = flux_limits
 	else:
 		vmx, vmn = np.percentile(dataBlock_I, percentiles)
 	ScaleZ=colors.Normalize(vmn,vmx)
-	axmainArtist_I = axmain[0].imshow(dataBlock_I,cmap=cmap, aspect = 'auto', vmin=vmn,vmax=vmx, interpolation ='none', extent =[time_limit[0], time_limit[1], fbot, ftop])
+	axmainArtist_I = axmain[ind_mplotlib].imshow(dataBlock_I,cmap=cmap, aspect = 'auto', vmin=vmn,vmax=vmx, interpolation ='none', extent =[time_limit[0], time_limit[1], fbot, ftop])
 # Setting colorbar
 	ax=axmainArtist_I.axes
 	fig=ax.figure
 	divider = axes_grid1.make_axes_locatable(ax)
-	cb = fig.colorbar(axmainArtist_I, extend='both',ax=axmain[0])
+	cb = fig.colorbar(axmainArtist_I, extend='both',ax=axmain[ind_mplotlib])
 	cb.set_label(r'Intensity',fontsize=fontsize)
 	cb.ax.tick_params(labelsize=fontsize)
 
-	
-# Plotting data - Stokes Q
-	vmx = 1
-	vmn = -vmx
-	ScaleZ=colors.Normalize(vmn,vmx)
-	axmainArtist_Q = axmain[1].imshow(dataBlock_Q,cmap='Greys', aspect = 'auto', vmin=vmn,vmax=vmx, interpolation= 'none', extent =[time_limit[0], time_limit[1], fbot, ftop])
+	ind_mplotlib = ind_mplotlib+1
+
+	if full_stokes == True:
+	# Plotting data - Stokes Q
+		vmx = 0.5
+		vmn = -vmx
+		ScaleZ=colors.Normalize(vmn,vmx)
+		axmainArtist_Q = axmain[ind_mplotlib].imshow(dataBlock_Q,cmap='Greys', aspect = 'auto', vmin=vmn,vmax=vmx, interpolation= 'none', extent =[time_limit[0], time_limit[1], fbot, ftop])
 
 
-# Setting colorbar
-	ax=axmainArtist_Q.axes
-	fig=ax.figure
-	divider = axes_grid1.make_axes_locatable(ax)
-	cb = fig.colorbar(axmainArtist_Q, extend='both',ax=axmain[1])
-	cb.set_label(r'Intensity',fontsize=fontsize)
-	cb.ax.tick_params(labelsize=fontsize)
-	
-# Plotting data - Stokes U
-	vmx = 1
-	vmn = -vmx
-	ScaleZ=colors.Normalize(vmn,vmx)
-	axmainArtist_U = axmain[2].imshow(dataBlock_U,cmap='Greys', aspect = 'auto', vmin=vmn,vmax=vmx, interpolation= 'none', extent =[time_limit[0], time_limit[1], fbot, ftop])
+	# Setting colorbar
+		ax=axmainArtist_Q.axes
+		fig=ax.figure
+		divider = axes_grid1.make_axes_locatable(ax)
+		cb = fig.colorbar(axmainArtist_Q, extend='both',ax=axmain[ind_mplotlib])
+		cb.set_label(r'',fontsize=fontsize)
+		cb.ax.tick_params(labelsize=fontsize)
 
+		ind_mplotlib = ind_mplotlib+1
 
-# Setting colorbar
-	ax=axmainArtist_U.axes
-	fig=ax.figure
-	divider = axes_grid1.make_axes_locatable(ax)
-	cb = fig.colorbar(axmainArtist_U, extend='both',ax=axmain[2])
-	cb.set_label(r'Intensity',fontsize=fontsize)
-	cb.ax.tick_params(labelsize=fontsize)
+	# Plotting data - Stokes U
+		vmx = 0.5
+		vmn = -vmx
+		ScaleZ=colors.Normalize(vmn,vmx)
+		axmainArtist_U = axmain[ind_mplotlib].imshow(dataBlock_U,cmap='Greys', aspect = 'auto', vmin=vmn,vmax=vmx, interpolation= 'none', extent =[time_limit[0], time_limit[1], fbot, ftop])
+
+	# Setting colorbar
+		ax=axmainArtist_U.axes
+		fig=ax.figure
+		divider = axes_grid1.make_axes_locatable(ax)
+		cb = fig.colorbar(axmainArtist_U, extend='both',ax=axmain[ind_mplotlib])
+		cb.set_label(r'',fontsize=fontsize)
+		cb.ax.tick_params(labelsize=fontsize)
+
+		ind_mplotlib = ind_mplotlib +1
 
 # Plotting data - Stokes V
 #	vmx = np.percentile(dataBlock_V, percentiles[-1])
-	vmx = 0.03
+	vmx = 0.4
 	vmn = -vmx
 	ScaleZ=colors.Normalize(vmn,vmx)
-	axmainArtist_V = axmain[3].imshow(dataBlock_V,cmap='bwr', aspect = 'auto', vmin=vmn,vmax=vmx, interpolation= 'none', extent =[time_limit[0], time_limit[1], fbot, ftop])
+	axmainArtist_V = axmain[ind_mplotlib].imshow(dataBlock_V,cmap='bwr', aspect = 'auto', vmin=vmn,vmax=vmx, interpolation= 'none', extent =[time_limit[0], time_limit[1], fbot, ftop])
 #	axmainArtist_V = axmain[3].pcolormesh([time_limit[0], time_limit[1]], [fbot, ftop], dataBlock_V, norm = ScaleZ, cmap='bwr', vmin=vmn,vmax=vmx)
 
 # Setting colorbar
 	ax=axmainArtist_V.axes
 	fig=ax.figure
 	divider = axes_grid1.make_axes_locatable(ax)
-	cb = fig.colorbar(axmainArtist_V, extend='both',ax=axmain[3])
-	cb.set_label(r'Intensity',fontsize=fontsize)
+	cb = fig.colorbar(axmainArtist_V, extend='both',ax=axmain[ind_mplotlib])
+	cb.set_label(r'Degree of Circular Polarization',fontsize=fontsize)
 	cb.ax.tick_params(labelsize=fontsize)
-	
-# Plotting data - Stokes L
-	vmx = 1
-	vmn = -vmx
-	ScaleZ=colors.Normalize(vmn,vmx)
-	axmainArtist_L = axmain[4].imshow(dataBlock_L,cmap='bwr', aspect = 'auto', vmin=vmn,vmax=vmx, interpolation= 'none', extent =[time_limit[0], time_limit[1], fbot, ftop])
+
+	ind_mplotlib = ind_mplotlib +1
+
+	if full_stokes == True:
+	# Plotting data - Stokes L
+		if flux_limits:
+			vmn, vmx = flux_limits
+		else:
+			vmx, vmn = np.percentile(dataBlock_L, percentiles)
+		vmn = 0
+		vmx = 0.5
+		ScaleZ=colors.Normalize(vmn,vmx)
+		axmainArtist_L = axmain[ind_mplotlib].imshow(dataBlock_L,cmap='Greys', aspect = 'auto', vmin=vmn,vmax=vmx, interpolation= 'none', extent =[time_limit[0], time_limit[1], fbot, ftop])
 
 
-# Setting colorbar
-	ax=axmainArtist_L.axes
-	fig=ax.figure
-	divider = axes_grid1.make_axes_locatable(ax)
-	cb = fig.colorbar(axmainArtist_L, extend='both',ax=axmain[4])
-	cb.set_label(r'Intensity',fontsize=fontsize)
-	cb.ax.tick_params(labelsize=fontsize)
+	# Setting colorbar
+		ax=axmainArtist_L.axes
+		fig=ax.figure
+		divider = axes_grid1.make_axes_locatable(ax)
+		cb = fig.colorbar(axmainArtist_L, extend='both',ax=axmain[ind_mplotlib])
 
 # Plotting data - Stokes V/I
 #	axmain[2].set_ylabel("Frequency (MHz)")
@@ -158,9 +182,8 @@ def plot_data(dataBlock_I, dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t
 
 # Telling matplotlib that the x-axis is filled with datetime data.
 # This line converts it from a float into a nice datetime string
-	axmain[0].xaxis_date()
-	axmain[1].xaxis_date()
-#	axmain[2].xaxis_date()
+	axmain[-1].xaxis_date()
+
 
 # Formatting the date
 	if time_delta.total_seconds() <= 5:
@@ -172,23 +195,52 @@ def plot_data(dataBlock_I, dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t
 
 	axmain[1].xaxis.set_major_formatter(dateFmt)
 
-	if time_delta.total_seconds() <= 5:
-		title_1.set_text(f"Stokes I - {t_init.strftime('%d %b %Y %H:%M')}")
-		title_2.set_text(f"Stokes V - {t_init.strftime('%d %b %Y %H:%M')}")
+	if full_stokes == True:
+		if time_delta.total_seconds() <= 5:
+			title_1.set_text(f"Stokes I - {t_init.strftime('%d %b %Y %H:%M')}")
+			title_2.set_text(f"Stokes Q - {t_init.strftime('%d %b %Y %H:%M')}")
+			title_3.set_text(f"Stokes U - {t_init.strftime('%d %b %Y %H:%M')}")
+			title_4.set_text(f"Stokes V - {t_init.strftime('%d %b %Y %H:%M')}")
+			title_5.set_text(f"Linear Polarization L - {t_init.strftime('%d %b %Y %H:%M')}")
+		else:
+			title_1.set_text(f"Stokes I - {t_init.strftime('%d %b %Y')}")
+			title_2.set_text(f"Stokes Q - {t_init.strftime('%d %b %Y')}")
+			title_3.set_text(f"Stokes U - {t_init.strftime('%d %b %Y')}")
+			title_4.set_text(f"Stokes V - {t_init.strftime('%d %b %Y')}")
+			title_5.set_text(f"Linear Polarization L - {t_init.strftime('%d %b %Y')}")
+		title_3.set_size(fontsize+2)
+		title_4.set_size(fontsize+2)
+		title_5.set_size(fontsize+2)
+
 	else:
-		title_1.set_text(f"Stokes I - {t_init.strftime('%d %b %Y')}")
-		title_2.set_text(f"Stokes V - {t_init.strftime('%d %b %Y')}")
+		if time_delta.total_seconds() <= 5:
+			title_1.set_text(f"Stokes I - {t_init.strftime('%d %b %Y %H:%M')}")
+			title_2.set_text(f"Stokes V - {t_init.strftime('%d %b %Y %H:%M')}")
+		else:
+			title_1.set_text(f"Stokes I - {t_init.strftime('%d %b %Y')}")
+			title_2.set_text(f"Stokes V - {t_init.strftime('%d %b %Y')}")
 
 	title_1.set_size(fontsize+2)
 	title_2.set_size(fontsize+2)
 
+
 # Setting fontisze of ticks and labels
 	plt.xticks(fontsize=fontsize)
 	plt.yticks(fontsize=fontsize)
-	axmain[1].xaxis.label.set_size(fontsize)
+	axmain[-1].xaxis.label.set_size(fontsize)
 	axmain[0].yaxis.label.set_size(fontsize)
 	axmain[1].yaxis.label.set_size(fontsize)
+
 	axmain[0].tick_params(axis='y',labelsize=fontsize)
+	axmain[1].tick_params(axis='y',labelsize=fontsize)
+
+	if full_stokes == True:
+		axmain[2].yaxis.label.set_size(fontsize)
+		axmain[3].yaxis.label.set_size(fontsize)
+		axmain[4].yaxis.label.set_size(fontsize)
+		axmain[2].tick_params(axis='y',labelsize=fontsize)
+		axmain[3].tick_params(axis='y',labelsize=fontsize)
+		axmain[4].tick_params(axis='y',labelsize=fontsize)
 
 #	axmain[0].yaxis.label.set_size(fontsize)
 #	axmain[1].yaxis.label.set_size(fontsize)
@@ -226,6 +278,7 @@ if __name__ == '__main__':
 	parser.add_argument('--subtract_background', dest='subtract_background', default = False, action = 'store_true', help = "Subtract a background to the data")
 	parser.add_argument('--downsample_frequency', dest='downsample_frequency', type = int, default = 1, help = "Downsample the dataset in frequency")
 
+	parser.add_argument('--full_stokes', dest = 'full_stokes', default = False, action = 'store_true', help = "Plot all Stokes Parameters and Linear Polarization L")
 	parser.add_argument("--title", dest = 'title', default = 'plot', help = "Plot title prefix")
 	parser.add_argument("--figsize", dest = 'figsize', nargs = 2, type = int, default=(26,14), help = "Figure size")
 	parser.add_argument("--fontsize", dest = 'fontsize', type = int, default = 14, help = "Font size for the plot")
@@ -302,18 +355,12 @@ if __name__ == '__main__':
 	P_BB = dataBlock_all[:, 1::4]
 	P_AB = dataBlock_all[:, 2::4]
 	P_BA = dataBlock_all[:, 3::4]
-	#for j in range(int(samplesPerBlock/4)):
-	#	P_AA[:,j] = dataBlock_all[:,j*4+0]
-	#	P_BB[:,j] = dataBlock_all[:,j*4+1]
-	#	P_AB[:,j] = dataBlock_all[:,j*4+2]
-	#	P_BA[:,j] = dataBlock_all[:,j*4+3]
-
-# calculating Stokes I and V
-	dataBlock_I = spp.Filterbank.FilterbankBlock(P_AA**2+P_BB**2,dataBlock_all.header)
-	dataBlock_Q = spp.Filterbank.FilterbankBlock(P_AA**2-P_BB**2,dataBlock_all.header)
+# calculating Stokes parameters (I, Q, U, V) & linear polarization L
+	dataBlock_I = spp.Filterbank.FilterbankBlock(P_AA+P_BB,dataBlock_all.header)
+	dataBlock_Q = spp.Filterbank.FilterbankBlock(P_AA-P_BB,dataBlock_all.header)
 	dataBlock_U = spp.Filterbank.FilterbankBlock(2*P_AB,dataBlock_all.header)
-	dataBlock_V = spp.Filterbank.FilterbankBlock(-2*P_BA,dataBlock_all.header)
-	dataBlock_L = spp.Filterbank.FilterbankBlock(np.sqrt((P_AA**2-P_BB**2)**2+(2*P_AB)**2),dataBlock_all.header)
+	dataBlock_V = spp.Filterbank.FilterbankBlock(-2*P_BA*10,dataBlock_all.header)
+	dataBlock_L = spp.Filterbank.FilterbankBlock(np.sqrt((P_AA-P_BB)**2+(2*P_AB)**2),dataBlock_all.header)
 
 # Downsampling the data and normalizing them if asked by the user
 	if args.plot_deci or args.plot_deci_norm:
@@ -330,7 +377,10 @@ if __name__ == '__main__':
 
 	if args.downsample_frequency != 1:
 		dataBlock_I = dataBlock_I.downsample(ffactor = args.downsample_frequency)
+		dataBlock_Q = dataBlock_Q.downsample(ffactor = args.downsample_frequency)
+		dataBlock_U = dataBlock_U.downsample(ffactor = args.downsample_frequency)
 		dataBlock_V = dataBlock_V.downsample(ffactor = args.downsample_frequency)
+		dataBlock_L = dataBlock_L.downsample(ffactor = args.downsample_frequency)
 	print(dataBlock_I.shape)
 
 # Setting frequency limits if asked by the user
@@ -339,7 +389,10 @@ if __name__ == '__main__':
 		print(dataBlock_I.header)
 		freq_array = np.array([dataBlock_I.header.ftop - j * np.abs(dataBlock_I.header.bandwidth*args.downsample_frequency)/(dataBlock_I.header.nchans-1) for j in range(dataBlock_I.header.nchans)])
 		dataBlock_I = dataBlock_I[(np.where((freq_array > args.frequency_limits[0]) & (freq_array < args.frequency_limits[1])))[0],:]
+		dataBlock_Q = dataBlock_Q[(np.where((freq_array > args.frequency_limits[0]) & (freq_array < args.frequency_limits[1])))[0],:]
+		dataBlock_U = dataBlock_U[(np.where((freq_array > args.frequency_limits[0]) & (freq_array < args.frequency_limits[1])))[0],:]
 		dataBlock_V = dataBlock_V[(np.where((freq_array > args.frequency_limits[0]) & (freq_array < args.frequency_limits[1])))[0],:]
+		dataBlock_L = dataBlock_L[(np.where((freq_array > args.frequency_limits[0]) & (freq_array < args.frequency_limits[1])))[0],:]
 		freq_array = (freq_array[np.where((freq_array > args.frequency_limits[0]) & (freq_array < args.frequency_limits[1]))])
 		print(freq_array.shape)
 		args.frequency_limits = (freq_array[-1],freq_array[0])
@@ -361,13 +414,16 @@ if __name__ == '__main__':
 	if args.rev:
 		dataBlock_I = dataBlock_I[-1::-1, ...]
 		dataBlock_V = dataBlock_V[-1::-1, ...]
+		dataBlock_Q = dataBlock_Q[-1::-1, ...]
+		dataBlock_U = dataBlock_U[-1::-1, ...]
+		dataBlock_L = dataBlock_L[-1::-1, ...]
 
 # Calling function to plot the data
 	if args.t_init and args.t_end:
 		print(f"t_init: {t_init_user} and t_end: {t_end_user}")
 	if args.plot_raw:
-		plot_data(dataBlock_I, dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t_init_user, t_end_user, args.title, args.prefix, readTimestamp, args.percentiles, args.flux_limits, args.frequency_limits, args.figsize, args.fontsize, reverse = args.rev, cmap = args.cmap)
+		plot_data(dataBlock_I, dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t_init_user, t_end_user, args.title, args.prefix, readTimestamp, args.percentiles, args.flux_limits, args.frequency_limits, args.figsize, args.fontsize, reverse = args.rev, cmap = args.cmap, full_stokes = args.full_stokes)
 	if args.plot_norm and args.plot_deci == False:
-		plot_data(dataBlock_I, dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t_init_user, t_end_user, f"{args.title} (norm)", f"{args.prefix}_norm", readTimestamp, args.percentiles, args.flux_limits, args.frequency_limits, args.figsize, args.fontsize, cmap = args.cmap)
+		plot_data(dataBlock_I,dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t_init_user, t_end_user, f"{args.title} (norm)", f"{args.prefix}_norm", readTimestamp, args.percentiles, args.flux_limits, args.frequency_limits, args.figsize, args.fontsize, cmap = args.cmap, full_stokes = args.full_stokes)
 	if args.plot_deci or args.plot_deci_norm:
-		plot_data(dataBlock_I, dataBlock_Q, dataBlock_U, dataBlock_V ,dataBlock_L, t_init_user, t_end_user, f"{args.title} (Decimated x {args.deci})", f"{args.prefix}_deci_{args.deci}", readTimestamp, args.percentiles, args.flux_limits, args.frequency_limits, args.figsize, args.fontsize, cmap = args.cmap)
+		plot_data(dataBlock_I,dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t_init_user, t_end_user, f"{args.title} (Decimated x {args.deci})", f"{args.prefix}_deci_{args.deci}", readTimestamp, args.percentiles, args.flux_limits, args.frequency_limits, args.figsize, args.fontsize, cmap = args.cmap, full_stokes = args.full_stokes)
