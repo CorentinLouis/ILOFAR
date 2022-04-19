@@ -1,5 +1,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+[![DOI](https://zenodo.org/badge/423628067.svg)](https://zenodo.org/badge/latestdoi/423628067)
+
+
 # ILOFAR
 Code to read and process Jupiter radio emissions observations from LOFAR data
 
