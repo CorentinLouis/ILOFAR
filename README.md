@@ -3,7 +3,7 @@
 # ILOFAR
 Code to read and process Jupiter radio emissions observations from LOFAR data
 
-The *plot_raw_data.py* routine will calculate and plot, from a sigproc filterbank file, the Stokes I (intensity) and V (degree of circular polarization) parameters.
+The *plot_raw_data.py* routine will calculate and plot, from a sigproc filterbank file, the Stokes I (intensity) and V (degree of circular polarization) parameters (and optionnaly the Stokes Q and U parameters and the degree of Linear Polarization).
 
 
 **How to us it**
@@ -23,6 +23,8 @@ The *plot_raw_data.py* routine will calculate and plot, from a sigproc filterban
 * --percentiles *max min*: Plotting percentile limits for the intensity flux (*two float values*)
 * --flux_limits *v1 v2*: Plotting fixed limits for the intensity flux (*two float values*)
 
+* --full_stokes: Plot all Stokes Parameters and Linear Polarization L
+
 * --plot_raw: Plot the raw data
 * --plot_norm: Plot the normalised data (using sigpyproc normalise() function)
 * --plot_deci: Plot raw temporal downsampled (base decimated) data
@@ -38,12 +40,13 @@ The *plot_raw_data.py* routine will calculate and plot, from a sigproc filterban
 * --fontsize *value*: Font size for the plot (*int value*)
 * --colormap *cmap_name*: Color map for the plot (*string*)
 
+* --help: entry that will give the user the above information
 
 *example*:
 
-python3 plot_raw_data.py -i /path/to/datafile/filename.fil-o /path/to/outputfile/output_filename --plot_raw --plot_deci --deci 4 --subtract_background --time_start 20210608051030 --time_end 20210608051040 --frequency_limits 8 40 --flux_limits -15 19 --figsize 15 15 --colormap 'viridis'--fontsize 22
+python3 plot_raw_data.py -i /path/to/datafile/filename.fil-o /path/to/outputfile/output_filename --plot_raw --plot_deci --deci 4 --subtract_background --time_start 20210608051030 --time_end 20210608051040 --frequency_limits 8 40 --flux_limits -15 19 --colormap 'viridis' --figsize 15 15  --fontsize 22
 
-In this example, *raw* data from *filename.fil* will be plot and saved into *output_filename.png* file. The data will be *downsample in time (by a factor 4)*. Only data between in the temporal *20210608051030*-*20210608051040* and spectral *8-40* ranges will be plot. *Intensity flux limits* are fixed between *-15* and *19* dB. The data will be plot using the *viridis* colomarp.
+In this example, *raw* data from *filename.fil* will be plot and saved into *output_filename.png* file. The data will be *downsample in time (by a factor 4)*. Only data between in the temporal *20210608051030*-*20210608051040* and spectral *8-40* ranges will be plot. The Stokes I data will be plot using the *viridis* colomarp, and the *Intensity flux limits* are fixed between *-15* and *19* dB.
 
 **Requirements**
 * argparse 1.1
