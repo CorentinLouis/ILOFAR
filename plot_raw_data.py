@@ -103,7 +103,7 @@ def plot_data(dataBlock_I, dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t
 		fig=ax.figure
 		divider = axes_grid1.make_axes_locatable(ax)
 		cb = fig.colorbar(axmainArtist_Q, extend='both',ax=axmain[ind_mplotlib])
-		cb.set_label(r'',fontsize=fontsize)
+		cb.set_label(r'Degree of Linear Polarization',fontsize=fontsize)
 		cb.ax.tick_params(labelsize=fontsize)
 
 		ind_mplotlib = ind_mplotlib+1
@@ -119,7 +119,7 @@ def plot_data(dataBlock_I, dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t
 		fig=ax.figure
 		divider = axes_grid1.make_axes_locatable(ax)
 		cb = fig.colorbar(axmainArtist_U, extend='both',ax=axmain[ind_mplotlib])
-		cb.set_label(r'',fontsize=fontsize)
+		cb.set_label(r'Degree of Linear Polarization',fontsize=fontsize)
 		cb.ax.tick_params(labelsize=fontsize)
 
 		ind_mplotlib = ind_mplotlib +1
@@ -159,7 +159,7 @@ def plot_data(dataBlock_I, dataBlock_Q, dataBlock_U, dataBlock_V, dataBlock_L, t
 		fig=ax.figure
 		divider = axes_grid1.make_axes_locatable(ax)
 		cb = fig.colorbar(axmainArtist_L, extend='both',ax=axmain[ind_mplotlib])
-		cb.set_label(r'',fontsize=fontsize)
+		cb.set_label(r'Intensity of Linear Polarization',fontsize=fontsize)
 		cb.ax.tick_params(labelsize=fontsize)
 
 # Plotting data - Stokes V/I
